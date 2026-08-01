@@ -20,6 +20,12 @@ spring:
             - Path=/api/products/**
           filters:
             - AuthenticationFilter
+        - id: product-service-categories
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/products/categories/**
+          filters:
+            - AuthenticationFilter
 
       globalcors:
         corsConfigurations:

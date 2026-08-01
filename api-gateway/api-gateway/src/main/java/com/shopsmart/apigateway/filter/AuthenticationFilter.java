@@ -1,25 +1,31 @@
 package com.shopsmart.apigateway.filter;
 
-import com.shopsmart.apigateway.util.JwtUtil;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
+import com.shopsmart.apigateway.util.JwtUtil;
+
+import lombok.extern.slf4j.Slf4j;
+
 @Component
-@RequiredArgsConstructor
 @Slf4j
 public class AuthenticationFilter extends
         AbstractGatewayFilterFactory<AuthenticationFilter.Config> {
 
-    private final JwtUtil jwtUtil;
+    @Autowired
+    private ApplicationContext applicationContext;
 
     public AuthenticationFilter() {
         super(Config.class);
-        this.jwtUtil = null;
+    }
+
+    private JwtUtil getJwtUtil() {
+        return applicationContext.getBean(JwtUtil.class);
     }
 
     @Override
@@ -39,14 +45,14 @@ public class AuthenticationFilter extends
             String token = authHeader.substring(7);
 
             // Token invalid or expired
-            if (!jwtUtil.isTokenValid(token)) {
+            if (!getJwtUtil().isTokenValid(token)) {
                 log.warn("Invalid JWT token");
                 exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
                 return exchange.getResponse().setComplete();
             }
 
-            // Token valid — add user email to header for downstream services
-            String email = jwtUtil.extractEmail(token);
+            // Token valid — pass user email downstream
+            String email = getJwtUtil().extractEmail(token);
             log.info("Authenticated request from: {}", email);
 
             return chain.filter(
