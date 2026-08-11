@@ -4,16 +4,9 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Navbar from './components/Navbar';
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
+import ProductsPage from './pages/products/ProductsPage';
 
 // Placeholder pages — we build these in next tickets
-function ProductsPage() {
-  return (
-    <div className="max-w-6xl mx-auto px-6 py-8">
-      <h1 className="text-2xl font-bold text-gray-900">Products</h1>
-      <p className="text-gray-500 mt-2">Coming in Ticket #7</p>
-    </div>
-  );
-}
 
 function CartPage() {
   return (
